@@ -1,4 +1,5 @@
 const STORAGE_KEY = "clearlist.tasks";
+const THEME_KEY = "clearlist.theme";
 const API_URL = window.location.protocol === "http:" || window.location.protocol === "https:" ? "/api/tasks" : null;
 
 const state = {
@@ -8,6 +9,7 @@ const state = {
   category: "all",
   calendarDate: new Date(),
   editingTaskId: null,
+  theme: localStorage.getItem(THEME_KEY) || "sage",
 };
 
 const elements = {
@@ -32,7 +34,16 @@ const elements = {
   calendarGrid: document.querySelector("#calendar-grid"),
   taskModal: document.querySelector("#task-modal"),
   sidebar: document.querySelector(".sidebar"),
+  themePicker: document.querySelector("#theme-picker"),
 };
+
+function applyTheme(theme) {
+  const availableThemes = ["sage", "sky", "plum"];
+  state.theme = availableThemes.includes(theme) ? theme : "sage";
+  document.documentElement.dataset.theme = state.theme;
+  elements.themePicker.value = state.theme;
+  localStorage.setItem(THEME_KEY, state.theme);
+}
 
 function loadTasks() {
   try {
@@ -266,6 +277,8 @@ document.querySelector("#category-filter").addEventListener("change", (event) =>
   renderTasks();
 });
 
+elements.themePicker.addEventListener("change", (event) => applyTheme(event.target.value));
+
 document.querySelector("#clear-completed").addEventListener("click", () => {
   state.tasks = state.tasks.filter((task) => !task.completed);
   saveTasks();
@@ -308,6 +321,7 @@ document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && !elements.taskModal.hidden) closeTaskModal();
 });
 
+applyTheme(state.theme);
 render();
 elements.dateInput.value = new Date().toISOString().slice(0, 10);
 syncTasksFromApi();

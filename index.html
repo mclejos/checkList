@@ -7,7 +7,7 @@
     <title>Clearlist | A calmer way to get things done</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="styles.css" />
     <script src="app.js" defer></script>
   </head>
@@ -72,26 +72,29 @@
               <option value="health">Health</option>
               <option value="learning">Learning</option>
             </select>
+            <label class="theme-picker"><span>Theme</span><select id="theme-picker" aria-label="Choose color theme"><option value="sage">Sage &amp; Coral</option><option value="sky">Ink &amp; Sky</option><option value="plum">Plum &amp; Gold</option></select></label>
             <button class="clear-button" id="clear-completed" type="button">Clear completed</button>
           </div>
 
-          <section class="calendar-panel" id="calendar-panel" aria-label="Task calendar">
-            <div class="calendar-heading">
-              <div><p class="eyebrow">Schedule</p><h2 id="calendar-title"></h2></div>
-              <div class="calendar-controls"><button class="calendar-button" id="previous-month" type="button" aria-label="Previous month">←</button><button class="calendar-button" id="next-month" type="button" aria-label="Next month">→</button></div>
-            </div>
-            <div class="calendar-weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
-            <div class="calendar-grid" id="calendar-grid"></div>
-          </section>
+          <div class="workspace-grid">
+            <section class="calendar-panel" id="calendar-panel" aria-label="Task calendar">
+              <div class="calendar-heading">
+                <div><p class="eyebrow">Schedule</p><h2 id="calendar-title"></h2></div>
+                <div class="calendar-controls"><button class="calendar-button" id="previous-month" type="button" aria-label="Previous month">←</button><button class="calendar-button" id="next-month" type="button" aria-label="Next month">→</button></div>
+              </div>
+              <div class="calendar-weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+              <div class="calendar-grid" id="calendar-grid"></div>
+            </section>
 
-          <section class="task-section" aria-live="polite">
-            <div class="task-list" id="task-list"></div>
-            <div class="empty-state" id="empty-state" hidden>
-              <div class="empty-check">✓</div>
-              <h2 id="empty-title">Nothing here yet.</h2>
-              <p id="empty-copy">Add your first task above and give it a place to land.</p>
-            </div>
-          </section>
+            <section class="task-section" aria-live="polite">
+              <div class="task-list" id="task-list"></div>
+              <div class="empty-state" id="empty-state" hidden>
+                <div class="empty-check">✓</div>
+                <h2 id="empty-title">Nothing here yet.</h2>
+                <p id="empty-copy">Add your first task above and give it a place to land.</p>
+              </div>
+            </section>
+          </div>
           <p class="keyboard-hint"><kbd>N</kbd> new task <span>•</span> <kbd>Enter</kbd> save edit <span>•</span> <kbd>Esc</kbd> cancel</p>
         </section>
       </main>
