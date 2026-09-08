@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f4f0e8" />
+    <title>Clearlist | A calmer way to get things done</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&family=Newsreader:opsz,wght@6..72,600;6..72,700&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="styles.css" />
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Primary navigation">
+        <div class="sidebar-topline">
+          <a class="brand" href="#/all" aria-label="Clearlist home">
+          <span class="brand-mark" aria-hidden="true">✓</span>
+          <span>clearlist</span>
+          </a>
+          <button class="sidebar-toggle" id="sidebar-toggle" type="button" aria-label="Collapse sidebar" title="Collapse sidebar">‹</button>
+        </div>
+
+        <div class="sidebar-section">
+          <p class="eyebrow">Your lists</p>
+          <nav class="nav-list" id="route-nav">
+            <a href="#/all" data-route="all"><span class="nav-icon">○</span>All tasks <span class="nav-count" id="all-count">0</span></a>
+            <a href="#/today" data-route="today"><span class="nav-icon">◷</span>Today <span class="nav-count" id="today-count">0</span></a>
+            <a href="#/upcoming" data-route="upcoming"><span class="nav-icon">↗</span>Upcoming</a>
+            <a href="#/completed" data-route="completed"><span class="nav-icon">✓</span>Completed</a>
+          </nav>
+        </div>
+
+        <div class="sidebar-note">
+          <span class="note-spark">✦</span>
+          <p><strong>Small steps count.</strong><br />Make space for what matters today.</p>
+        </div>
+        <p class="sidebar-footer">Your tasks stay on this device.</p>
+      </aside>
+
+      <main class="main-content">
+        <section class="content-wrap">
+          <div class="page-heading">
+            <div>
+              <p class="eyebrow" id="view-kicker">Overview</p>
+              <h1 id="view-title">A clear mind starts here.</h1>
+              <p class="subtitle" id="view-subtitle">Capture the little things, then get back to the good stuff.</p>
+            </div>
+            <div class="heading-status">
+              <div class="date-stamp" id="date-stamp" aria-label="Current date and time"></div>
+              <div class="progress-ring" id="progress-ring" aria-label="0 percent complete"><span id="progress-value">0%</span></div>
+            </div>
+          </div>
+
+          <button class="add-task-trigger" id="add-task-trigger" type="button">
+            <span class="composer-plus" aria-hidden="true">＋</span>
+            <span><strong>Add a new task</strong><small>Capture something you want to get done</small></span>
+            <span class="trigger-arrow" aria-hidden="true">↗</span>
+          </button>
+
+          <div class="toolbar">
+            <div class="filter-tabs" role="tablist" aria-label="Task filters">
+              <button class="filter-tab is-active" data-filter="all" type="button">All</button>
+              <button class="filter-tab" data-filter="active" type="button">Active</button>
+              <button class="filter-tab" data-filter="completed" type="button">Done</button>
+            </div>
+            <select class="category-filter" id="category-filter" aria-label="Filter by category">
+              <option value="all">All categories</option>
+              <option value="personal">Personal</option>
+              <option value="work">Work</option>
+              <option value="health">Health</option>
+              <option value="learning">Learning</option>
+            </select>
+            <button class="clear-button" id="clear-completed" type="button">Clear completed</button>
+          </div>
+
+          <section class="calendar-panel" id="calendar-panel" aria-label="Task calendar">
+            <div class="calendar-heading">
+              <div><p class="eyebrow">Schedule</p><h2 id="calendar-title"></h2></div>
+              <div class="calendar-controls"><button class="calendar-button" id="previous-month" type="button" aria-label="Previous month">←</button><button class="calendar-button" id="next-month" type="button" aria-label="Next month">→</button></div>
+            </div>
+            <div class="calendar-weekdays" aria-hidden="true"><span>Sun</span><span>Mon</span><span>Tue</span><span>Wed</span><span>Thu</span><span>Fri</span><span>Sat</span></div>
+            <div class="calendar-grid" id="calendar-grid"></div>
+          </section>
+
+          <section class="task-section" aria-live="polite">
+            <div class="task-list" id="task-list"></div>
+            <div class="empty-state" id="empty-state" hidden>
+              <div class="empty-check">✓</div>
+              <h2 id="empty-title">Nothing here yet.</h2>
+              <p id="empty-copy">Add your first task above and give it a place to land.</p>
+            </div>
+          </section>
+          <p class="keyboard-hint"><kbd>N</kbd> new task <span>•</span> <kbd>Enter</kbd> save edit <span>•</span> <kbd>Esc</kbd> cancel</p>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal-backdrop" id="task-modal" hidden>
+      <section class="task-modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+        <div class="modal-heading">
+          <div>
+            <p class="eyebrow">New item</p>
+            <h2 id="modal-title">Put it on the list.</h2>
+          </div>
+          <button class="modal-close" id="modal-close" type="button" aria-label="Close add task dialog">×</button>
+        </div>
+        <form id="task-form">
+          <label class="field-label" for="task-input">Task</label>
+          <input class="modal-task-input" id="task-input" name="task" type="text" autocomplete="off" placeholder="What needs doing?" maxlength="120" aria-label="New task" />
+          <div class="modal-fields">
+            <label><span class="field-label">Category</span><select id="category-input" name="category" aria-label="Task category"><option value="personal">Personal</option><option value="work">Work</option><option value="health">Health</option><option value="learning">Learning</option></select></label>
+            <label><span class="field-label">Due date</span><input id="date-input" name="dueDate" type="date" aria-label="Task due date" /></label>
+          </div>
+          <div class="modal-actions"><button class="button button-secondary" id="modal-cancel" type="button">Cancel</button><button class="button button-primary" id="modal-submit" type="submit">Add task <span>↵</span></button></div>
+        </form>
+      </section>
+    </div>
+  </body>
+</html>

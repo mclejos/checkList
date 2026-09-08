@@ -1,0 +1,9 @@
+{
+  "name": "clearlist-todo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Clearlist todo app with a local task API",
+  "scripts": {
+    "start": "node server.js"
+  }
+}

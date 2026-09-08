@@ -1,0 +1,17 @@
+[
+  {
+    "id": "02838a7d-9f42-4294-b53f-787fd49c2a9b",
+    "text": "new",
+    "completed": false,
+    "createdAt": 1788848519585,
+    "dueDate": "2026-09-08",
+    "category": "personal"
+  },
+  {
+    "id": "test-1",
+    "text": "Backend test",
+    "completed": false,
+    "dueDate": "",
+    "category": "work"
+  }
+]
