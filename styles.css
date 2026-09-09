@@ -110,7 +110,7 @@ button { cursor: pointer; }
 .calendar-panel[hidden] { display: none; }
 .workspace-grid .calendar-panel, .workspace-grid .task-section { height: 100%; }
 .workspace-grid .calendar-panel { margin-bottom: 0; }
-.workspace-grid .task-section { min-width: 0; }
+.workspace-grid .task-section { min-width: 0; padding: 15px; background: rgba(255,253,250,.65); border: 1px solid var(--line); border-radius: 10px; }
 .calendar-heading { display: flex; align-items: center; justify-content: flex-end; min-height: 48px; margin-bottom: 28px; position: relative; }
 .calendar-heading > div:first-child { display: flex; flex-direction: column; align-items: center; position: absolute; left: 50%; transform: translateX(-50%); }
 .calendar-heading .eyebrow { margin-bottom: 2px; }
@@ -151,6 +151,7 @@ button { cursor: pointer; }
 .task-item:hover .task-actions, .task-actions:focus-within { opacity: 1; }
 .task-action { padding: 6px; color: #98a29a; background: transparent; border: 0; font-size: 13px; }
 .task-action:hover { color: var(--coral); }
+.empty-state[hidden] { display: none; }
 .empty-state { display: grid; height: 100%; min-height: 100%; align-content: center; padding: 80px 20px; color: var(--muted); text-align: center; border: 1px dashed #d8ded4; border-radius: 10px; }
 .empty-check { display: grid; width: 40px; height: 40px; margin: 0 auto 15px; place-items: center; color: var(--sage-dark); background: #e3ebe1; border-radius: 50%; }
 .empty-state h2 { margin: 0; color: var(--ink); font-family: var(--font-ui); font-size: 22px; font-weight: 700; }

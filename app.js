@@ -93,7 +93,12 @@ function getVisibleTasks() {
   if (state.filter === "completed") visibleTasks = visibleTasks.filter((task) => task.completed);
   if (state.category !== "all") visibleTasks = visibleTasks.filter((task) => (task.category || "personal") === state.category);
 
-  return visibleTasks;
+  return [...visibleTasks].sort((firstTask, secondTask) => {
+    if (!firstTask.dueDate && !secondTask.dueDate) return secondTask.createdAt - firstTask.createdAt;
+    if (!firstTask.dueDate) return 1;
+    if (!secondTask.dueDate) return -1;
+    return firstTask.dueDate.localeCompare(secondTask.dueDate) || secondTask.createdAt - firstTask.createdAt;
+  });
 }
 
 function createTask(text, category, dueDate) {
