@@ -9,6 +9,8 @@ const state = {
   category: "all",
   calendarDate: new Date(),
   editingTaskId: null,
+  selectedDate: null,
+  dateTaskSearch: "",
   theme: localStorage.getItem(THEME_KEY) || "sage",
 };
 
@@ -33,6 +35,10 @@ const elements = {
   calendarTitle: document.querySelector("#calendar-title"),
   calendarGrid: document.querySelector("#calendar-grid"),
   taskModal: document.querySelector("#task-modal"),
+  dateTaskModal: document.querySelector("#date-task-modal"),
+  dateTaskTitle: document.querySelector("#date-task-title"),
+  dateTaskSearch: document.querySelector("#date-task-search"),
+  dateTaskList: document.querySelector("#date-task-list"),
   sidebar: document.querySelector(".sidebar"),
   themePicker: document.querySelector("#theme-picker"),
 };
@@ -145,8 +151,10 @@ function updateNavigation() {
 }
 
 function updateProgress() {
-  const total = state.tasks.length;
-  const completed = state.tasks.filter((task) => task.completed).length;
+  const today = new Date().toISOString().slice(0, 10);
+  const todaysTasks = state.tasks.filter((task) => task.dueDate === today);
+  const total = todaysTasks.length;
+  const completed = todaysTasks.filter((task) => task.completed).length;
   const percent = total ? Math.round((completed / total) * 100) : 0;
   elements.progressValue.textContent = `${percent}%`;
   elements.progressRing.style.background = `conic-gradient(var(--sage) ${percent * 3.6}deg, #e5e9e1 0deg)`;
@@ -219,13 +227,45 @@ function escapeHtml(value) {
   return value.replace(/[&<>'"]/g, (character) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", "'": "&#39;", '"': "&quot;" }[character]));
 }
 
+function renderDateTaskList() {
+  const categoryLabels = { personal: "Personal", work: "Work", health: "Health", learning: "Learning" };
+  const searchTerm = state.dateTaskSearch.trim().toLowerCase();
+  const tasks = state.tasks
+    .filter((task) => task.dueDate === state.selectedDate)
+    .filter((task) => !searchTerm || `${task.text} ${task.category || "personal"}`.toLowerCase().includes(searchTerm))
+    .sort((firstTask, secondTask) => secondTask.createdAt - firstTask.createdAt);
+
+  elements.dateTaskList.innerHTML = tasks.length ? tasks.map((task) => `
+    <button class="date-task-item ${task.completed ? "is-complete" : ""}" type="button" data-id="${task.id}">
+      <span class="date-task-check">${task.completed ? "✓" : ""}</span>
+      <span class="date-task-copy"><strong>${escapeHtml(task.text)}</strong><small>${categoryLabels[task.category || "personal"]}</small></span>
+    </button>
+  `).join("") : `<p class="date-task-empty">${searchTerm ? "No matching tasks." : "No tasks planned for this date."}</p>`;
+}
+
+function closeDateTaskModal() {
+  elements.dateTaskModal.hidden = true;
+  state.selectedDate = null;
+  state.dateTaskSearch = "";
+}
+
+function openDateTaskModal(dateValue) {
+  state.selectedDate = dateValue;
+  state.dateTaskSearch = "";
+  elements.dateTaskTitle.textContent = new Intl.DateTimeFormat("en-US", { weekday: "long", month: "long", day: "numeric" }).format(new Date(`${dateValue}T00:00:00`));
+  elements.dateTaskSearch.value = "";
+  renderDateTaskList();
+  elements.dateTaskModal.hidden = false;
+  elements.dateTaskSearch.focus();
+}
+
 function closeTaskModal() {
   elements.taskModal.hidden = true;
   document.body.classList.remove("modal-open");
   state.editingTaskId = null;
 }
 
-function openTaskModal(task = null) {
+function openTaskModal(task = null, dueDate = null) {
   elements.taskModal.hidden = false;
   document.body.classList.add("modal-open");
   state.editingTaskId = task?.id || null;
@@ -233,7 +273,7 @@ function openTaskModal(task = null) {
   elements.modalSubmit.firstChild.textContent = task ? "Save changes " : "Add task ";
   elements.taskInput.value = task?.text || "";
   elements.categoryInput.value = task?.category || "personal";
-  elements.dateInput.value = task?.dueDate || new Date().toISOString().slice(0, 10);
+  elements.dateInput.value = task?.dueDate || dueDate || new Date().toISOString().slice(0, 10);
   elements.taskInput.focus();
 }
 
@@ -298,12 +338,35 @@ document.querySelector("#next-month").addEventListener("click", () => {
   state.calendarDate = new Date(state.calendarDate.getFullYear(), state.calendarDate.getMonth() + 1, 1);
   renderCalendar();
 });
+elements.calendarGrid.addEventListener("click", (event) => {
+  const day = event.target.closest("[data-date]");
+  if (day) openDateTaskModal(day.dataset.date);
+});
 
 document.querySelector("#add-task-trigger").addEventListener("click", () => openTaskModal());
 document.querySelector("#modal-close").addEventListener("click", closeTaskModal);
 document.querySelector("#modal-cancel").addEventListener("click", closeTaskModal);
+document.querySelector("#date-task-close").addEventListener("click", closeDateTaskModal);
+document.querySelector("#date-task-add").addEventListener("click", () => {
+  const selectedDate = state.selectedDate;
+  closeDateTaskModal();
+  openTaskModal(null, selectedDate);
+});
+elements.dateTaskSearch.addEventListener("input", (event) => {
+  state.dateTaskSearch = event.target.value;
+  renderDateTaskList();
+});
+elements.dateTaskList.addEventListener("click", (event) => {
+  const task = state.tasks.find((entry) => entry.id === event.target.closest("[data-id]")?.dataset.id);
+  if (!task) return;
+  closeDateTaskModal();
+  openTaskModal(task);
+});
 elements.taskModal.addEventListener("click", (event) => {
   if (event.target === elements.taskModal) closeTaskModal();
+});
+elements.dateTaskModal.addEventListener("click", (event) => {
+  if (event.target === elements.dateTaskModal) closeDateTaskModal();
 });
 document.querySelector("#sidebar-toggle").addEventListener("click", () => {
   const collapsed = elements.sidebar.classList.toggle("is-collapsed");
@@ -324,6 +387,7 @@ document.addEventListener("keydown", (event) => {
     openTaskModal();
   }
   if (event.key === "Escape" && !elements.taskModal.hidden) closeTaskModal();
+  if (event.key === "Escape" && !elements.dateTaskModal.hidden) closeDateTaskModal();
 });
 
 applyTheme(state.theme);
